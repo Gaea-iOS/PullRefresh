@@ -13,14 +13,16 @@ class ViewController: UITableViewController {
 
     private var onceToken = UUID().uuidString
     
-    private var _count: Int = 20
+    private var hadSet: Bool = false
+    
+    private var _count: Int = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         tableView.tableFooterView = UIView()
         
-//        automaticallyAdjustsScrollViewInsets = false
+        automaticallyAdjustsScrollViewInsets = false
         
         tableView.addPullRefresh {
             print("pull refreshing action!!!")
@@ -43,21 +45,24 @@ class ViewController: UITableViewController {
                 self.tableView.reloadData()
             })
         }
-        
-//        let _ = delay(0.3) {
-//            self.tableView.startPullRefresh()
-//        }
+                
+        UIView.animate(withDuration: 3, animations: {
+            
+        }) { _ in
+            self.tableView.startPullRefresh()
+        }
     }
     
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-//        Once(token: onceToken).execute {
-//            tableView.contentInset = UIEdgeInsets(top: topLayoutGuide.length, left: 0, bottom: bottomLayoutGuide.length, right: 0)
-//            tableView.scrollIndicatorInsets = tableView.contentInset
+        if !hadSet {
+            hadSet = true
+            tableView.contentInset = UIEdgeInsets(top: topLayoutGuide.length, left: 0, bottom: bottomLayoutGuide.length, right: 0)
+            tableView.scrollIndicatorInsets = tableView.contentInset
 //            tableView.contentOffset.y = -topLayoutGuide.length
-//        }
+        }
     }
     
     override func didReceiveMemoryWarning() {

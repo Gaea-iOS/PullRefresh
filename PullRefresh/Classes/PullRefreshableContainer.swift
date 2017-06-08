@@ -57,6 +57,11 @@ class PullRefreshableContainer: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         refreshView.refreshView.frame = bounds
+        
+        if let scrollView = superview as? UIScrollView {
+            scrollViewInsets = scrollView.contentInset
+            scrollView.contentOffset.y = -scrollViewInsets.top
+        }
     }
     
     override func willMove(toSuperview newSuperview: UIView?) {
@@ -126,16 +131,11 @@ private extension PullRefreshableContainer {
         
         refreshView.startRefreshAnimation()
         
-        scrollViewInsets = scrollView.contentInset
         var insets = scrollViewInsets
         insets.top += frame.size.height
         
-        var contentOffset = scrollView.contentOffset
-        contentOffset.y = -scrollViewInsets.top - frame.size.height
-        
-        UIView.animate(withDuration: 0.5, animations: {
+        UIView.animate(withDuration: 0.3, animations: {
             scrollView.contentInset = insets
-            scrollView.setContentOffset(contentOffset, animated: true)
         }, completion: { _ in
             self.refreshAction?()
         })
@@ -147,7 +147,7 @@ private extension PullRefreshableContainer {
         
         refreshView.stopRefreshAnimation()
         
-        UIView.animate(withDuration: 0.5, animations: {
+        UIView.animate(withDuration: 0.3, animations: {
             scrollView.contentInset = self.scrollViewInsets
         }, completion: { _ in
             self.isHidden = true

@@ -58,6 +58,13 @@ class PushRefreshableContainer: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         refreshView.refreshView.frame = bounds
+        
+        if let scrollView = superview as? UIScrollView {
+            scrollViewInsets = scrollView.contentInset
+            scrollViewInsets.bottom += bounds.height
+            scrollView.contentInset = scrollViewInsets
+            scrollView.contentOffset.y = -scrollViewInsets.top
+        }
     }
     
     override func willMove(toSuperview newSuperview: UIView?) {
@@ -84,10 +91,12 @@ class PushRefreshableContainer: UIView {
 
         guard state != .refreshing else { return }
         
+        guard scrollView.contentOffset.y + scrollViewInsets.top > 0 else { return }
+        
         frame.origin.y = max(scrollView.contentSize.height, scrollView.bounds.size.height - scrollView.contentInset.top - scrollView.contentInset.bottom)
         
-        let progress = (scrollView.contentOffset.y + scrollView.frame.size.height - scrollView.contentInset.bottom - frame.origin.y) / frame.size.height
-        
+        let progress = (scrollView.contentOffset.y + scrollView.frame.size.height - scrollView.contentInset.bottom - frame.origin.y + bounds.height) / frame.size.height
+
 //        print("push progress = \(progress)")
         
         guard progress > 0 else {
@@ -128,11 +137,9 @@ private extension PushRefreshableContainer {
         isHidden = false
         
         refreshView.startRefreshAnimation()
-        
-        scrollViewInsets = scrollView.contentInset
-        
+                
         var insets = scrollViewInsets
-        insets.bottom += frame.size.height
+//        insets.bottom += frame.size.height
         
         UIView.animate(withDuration: 0.3, animations: {
             scrollView.contentInset = insets
@@ -147,7 +154,7 @@ private extension PushRefreshableContainer {
         
         refreshView.stopRefreshAnimation()
         
-        UIView.animate(withDuration: 0.5, animations: {
+        UIView.animate(withDuration: 0.3, animations: {
             scrollView.contentInset = self.scrollViewInsets
         }, completion: { _ in
             self.isHidden = true
