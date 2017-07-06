@@ -127,6 +127,9 @@ private extension PushRefreshableContainer {
         if let scrollView = superview as? UIScrollView {
             scrollView.removeObserver(self, forKeyPath: contentOffsetKeyPath, context: &kvoContext)
             scrollView.removeObserver(self, forKeyPath: contentSizeKeyPath, context: &kvoContext)
+            var contentInset = scrollView.contentInset
+            contentInset.bottom -= bounds.height
+            scrollView.contentInset = contentInset
         }
     }
     
@@ -138,8 +141,7 @@ private extension PushRefreshableContainer {
         
         refreshView.startRefreshAnimation()
                 
-        var insets = scrollViewInsets
-//        insets.bottom += frame.size.height
+        let insets = scrollViewInsets
         
         UIView.animate(withDuration: 0.3, animations: {
             scrollView.contentInset = insets

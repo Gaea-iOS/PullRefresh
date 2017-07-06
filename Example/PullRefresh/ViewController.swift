@@ -95,7 +95,28 @@ class ViewController: UITableViewController {
         //        })
         //        _count = 30
         //        tableView.reloadData()
-        tableView.removePullRefresh()
+        
+        tableView.addPullRefresh {
+            print("pull refreshing action!!!")
+            
+            let time = DispatchTime.now() + Double(Int64(1 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
+            DispatchQueue.main.asyncAfter(deadline: time, execute: {
+                self.tableView.stopPullRefresh()
+                self._count = 20
+                self.tableView.reloadData()
+            })
+        }
+        
+        tableView.addPushRefresh {
+            print("push refreshing action!!!")
+            
+            let time = DispatchTime.now() + Double(Int64(2 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
+            DispatchQueue.main.asyncAfter(deadline: time, execute: {
+                self.tableView.stopPushRefresh()
+                self._count += 20
+                self.tableView.reloadData()
+            })
+        }
     }
     
     @IBAction func clickRightButton(sender: AnyObject) {
@@ -109,6 +130,8 @@ class ViewController: UITableViewController {
         //        _count = 0
         //        tableView.reloadData()
         tableView.removePushRefresh()
+        tableView.removePushRefresh()
+
     }
 }
 
