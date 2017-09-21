@@ -10,7 +10,7 @@ import UIKit
 
 public extension UIScrollView {
     
-    public func addPullRefresh(refreshView: RefreshViewType = PullToRefreshView(), refreshAction: ((Void) -> Void)? = nil) {
+    public func addPullRefresh(refreshView: RefreshViewType = PullToRefreshView(), refreshAction: (() -> Void)? = nil) {
         
         if pullRefreshableContainer == nil {
             let height: CGFloat = 60
@@ -40,7 +40,7 @@ public extension UIScrollView {
 
 public extension UIScrollView {
     
-    public func addPushRefresh(refreshView: RefreshViewType = PushToRefreshView(), refreshAction: ((Void) -> Void)? = nil) {
+    public func addPushRefresh(refreshView: RefreshViewType = PushToRefreshView(), refreshAction: (() -> Void)? = nil) {
         
         if pushRefreshableContainer == nil {
             let height: CGFloat = 60

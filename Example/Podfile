@@ -2,6 +2,7 @@ use_frameworks!
 
 target 'PullRefresh_Example' do
   pod 'PullRefresh', :path => '../'
+  pod 'Reusable'
 
   target 'PullRefresh_Tests' do
     inherit! :search_paths

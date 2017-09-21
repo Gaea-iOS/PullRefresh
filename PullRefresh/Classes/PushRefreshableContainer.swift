@@ -23,7 +23,7 @@ class PushRefreshableContainer: UIView {
     
     let refreshView: RefreshViewType
     fileprivate var scrollViewInsets: UIEdgeInsets = .zero
-    fileprivate let refreshAction: ((Void) -> Void)?
+    fileprivate let refreshAction: (() -> Void)?
     
     var state: PullToRefreshState = .stoped {
         didSet {
@@ -45,7 +45,7 @@ class PushRefreshableContainer: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    init(frame: CGRect, refreshView: RefreshViewType, refreshAction: ((Void) -> Void)? = nil) {
+    init(frame: CGRect, refreshView: RefreshViewType, refreshAction: (() -> Void)? = nil) {
         
         self.refreshView = refreshView
         self.refreshAction = refreshAction

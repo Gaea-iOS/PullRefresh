@@ -24,7 +24,8 @@ class ViewController: UITableViewController {
         
         automaticallyAdjustsScrollViewInsets = false
         
-        tableView.addPullRefresh {
+        tableView.addPullRefresh(refreshView: PullRefreshView.loadFromNib()) {
+      
             print("pull refreshing action!!!")
             
             let time = DispatchTime.now() + Double(Int64(1 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
