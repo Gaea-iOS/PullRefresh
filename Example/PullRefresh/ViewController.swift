@@ -22,7 +22,7 @@ class ViewController: UITableViewController {
         // Do any additional setup after loading the view, typically from a nib.
         tableView.tableFooterView = UIView()
         
-        automaticallyAdjustsScrollViewInsets = false
+//        automaticallyAdjustsScrollViewInsets = false
         
         tableView.addPullRefresh(refreshView: PullRefreshView.loadFromNib()) {
       
@@ -55,16 +55,16 @@ class ViewController: UITableViewController {
     }
     
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
-        if !hadSet {
-            hadSet = true
-            tableView.contentInset = UIEdgeInsets(top: topLayoutGuide.length, left: 0, bottom: bottomLayoutGuide.length, right: 0)
-            tableView.scrollIndicatorInsets = tableView.contentInset
-//            tableView.contentOffset.y = -topLayoutGuide.length
-        }
-    }
+//    override func viewDidLayoutSubviews() {
+//        super.viewDidLayoutSubviews()
+//        
+//        if !hadSet {
+//            hadSet = true
+//            tableView.contentInset = UIEdgeInsets(top: topLayoutGuide.length, left: 0, bottom: bottomLayoutGuide.length, right: 0)
+//            tableView.scrollIndicatorInsets = tableView.contentInset
+////            tableView.contentOffset.y = -topLayoutGuide.length
+//        }
+//    }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

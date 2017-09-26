@@ -17,12 +17,11 @@ class PullRefreshableContainer: UIView {
         case stoped
     }
     
-    fileprivate let contentOffsetKeyPath = "contentOffset"
-    fileprivate var kvoContext = "pullToRefreshViewKVOContext"
+    private let refreshView: RefreshViewType
+    private var scrollViewInsets: UIEdgeInsets = .zero
+    private let refreshAction: (() -> Void)?
     
-    let refreshView: RefreshViewType
-    fileprivate var scrollViewInsets: UIEdgeInsets = .zero
-    fileprivate let refreshAction: (() -> Void)?
+    private var observation: NSKeyValueObservation?
     
     var state: PullToRefreshState = .stoped {
         didSet {
@@ -39,7 +38,7 @@ class PullRefreshableContainer: UIView {
             }
         }
     }
-        
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -65,31 +64,23 @@ class PullRefreshableContainer: UIView {
     }
     
     override func willMove(toSuperview newSuperview: UIView?) {
-        unregister()
         if let scrollView = newSuperview as? UIScrollView {
-            scrollView.addObserver(self, forKeyPath: contentOffsetKeyPath, options: [.initial, .new], context: &kvoContext)
+            observation = scrollView.observe(\.contentOffset) { [weak self] (scrollView, changed) in
+                self?.observeChanged(scrollView: scrollView)
+            }
         }
     }
     
     deinit {
         print("\(self) deinit")
-        unregister()
     }
     
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        
-        guard context == &kvoContext,
-            keyPath == contentOffsetKeyPath,
-            let scrollView = object as? UIScrollView else {
-                super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-                return
-        }
-        
+    private func observeChanged(scrollView: UIScrollView) {
         guard state != .refreshing else { return }
         
         let progress = (scrollView.contentOffset.y + scrollView.contentInset.top) / frame.size.height
         
-//        print("pull progress = \(progress)")
+        //        print("pull progress = \(progress)")
         
         guard progress < 0 else {
             if state == .pulling {
@@ -99,7 +90,7 @@ class PullRefreshableContainer: UIView {
         }
         
         isHidden = false
-                
+        
         if scrollView.isDragging {
             refreshView.pulling(progress: -progress)
             state = .pulling
@@ -115,15 +106,9 @@ class PullRefreshableContainer: UIView {
     }
 }
 
-private extension PullRefreshableContainer {
+extension PullRefreshableContainer {
     
-    func unregister() {
-        if let scrollView = superview as? UIScrollView {
-            scrollView.removeObserver(self, forKeyPath: contentOffsetKeyPath, context: &kvoContext)
-        }
-    }
-    
-    func startAnimation() {
+    private func startAnimation() {
         
         guard let scrollView = superview as? UIScrollView else { return }
         
@@ -141,7 +126,7 @@ private extension PullRefreshableContainer {
         })
     }
     
-    func stopAnimation() {
+    private func stopAnimation() {
         
         guard let scrollView = superview as? UIScrollView else { return }
         
