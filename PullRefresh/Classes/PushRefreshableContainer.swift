@@ -57,18 +57,16 @@ class PushRefreshableContainer: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         refreshView.refreshView.frame = bounds
-        
-        if let scrollView = superview as? UIScrollView {
-            scrollViewInsets = scrollView.contentInset
-            scrollViewInsets.bottom += bounds.height
-            scrollView.contentInset = scrollViewInsets
-            scrollView.contentOffset.y = -scrollViewInsets.top
-        }
     }
     
     override func willMove(toSuperview newSuperview: UIView?) {
         
         if let scrollView = newSuperview as? UIScrollView {
+            
+            scrollViewInsets = scrollView.contentInset
+            scrollViewInsets.bottom += bounds.height
+            scrollView.contentInset = scrollViewInsets
+            scrollView.contentOffset.y = -scrollViewInsets.top
             
             observation1 = scrollView.observe(\.contentOffset, changeHandler: { [weak self] (scrollView, changed) in
                 self?.observeChanged(scrollView: scrollView)

@@ -9,6 +9,9 @@
 import UIKit
 import PullRefresh
 
+var i: Int = 0
+
+
 class ViewController: UITableViewController {
 
     private var onceToken = UUID().uuidString
@@ -36,13 +39,19 @@ class ViewController: UITableViewController {
             })
         }
         
+        
         tableView.addPushRefresh {
             print("push refreshing action!!!")
+            i += 1
             
             let time = DispatchTime.now() + Double(Int64(2 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
-            DispatchQueue.main.asyncAfter(deadline: time, execute: {
+            
+            let time1 = DispatchTime.now() + Double(Int64(0.2 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
+
+            DispatchQueue.main.asyncAfter(deadline: i < 2 ? time : time1 , execute: {
                 self.tableView.stopPushRefresh()
-                self._count += 20
+                self.tableView.stopPullRefresh()
+                self._count += i < 2 ? 20 : 0
                 self.tableView.reloadData()
             })
         }
