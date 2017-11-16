@@ -17,9 +17,9 @@ class PushRefreshableContainer: UIView {
         case stoped
     }
     
-    private let refreshView: RefreshViewType
-    private var scrollViewInsets: UIEdgeInsets = .zero
-    private let refreshAction: (() -> Void)?
+    fileprivate let refreshView: RefreshViewType
+    fileprivate var scrollViewInsets: UIEdgeInsets = .zero
+    fileprivate let refreshAction: (() -> Void)?
     
     private var observation1: NSKeyValueObservation?
     private var observation2: NSKeyValueObservation?
@@ -126,7 +126,7 @@ class PushRefreshableContainer: UIView {
 
 extension PushRefreshableContainer {
     
-    private func startAnimation() {
+    fileprivate func startAnimation() {
         
         guard let scrollView = superview as? UIScrollView else { return }
         
@@ -143,7 +143,7 @@ extension PushRefreshableContainer {
         })
     }
     
-    private func stopAnimation() {
+    fileprivate func stopAnimation() {
         
         guard let scrollView = superview as? UIScrollView else { return }
         

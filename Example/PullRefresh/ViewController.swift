@@ -42,7 +42,7 @@ class ViewController: UITableViewController {
         
         tableView.addPushRefresh {
             print("push refreshing action!!!")
-            i += 1
+//            i += 1
             
             let time = DispatchTime.now() + Double(Int64(2 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
             
