@@ -21,9 +21,9 @@ class PushRefreshableContainer: UIView {
     fileprivate var scrollViewInsets: UIEdgeInsets = .zero
     fileprivate let refreshAction: (() -> Void)?
     
-    private var observation1: NSKeyValueObservation?
-    private var observation2: NSKeyValueObservation?
-    
+//    private var observation1: NSKeyValueObservation?
+//    private var observation2: NSKeyValueObservation?
+	
     var state: PullToRefreshState = .stoped {
         didSet {
             guard state != oldValue else { return }
@@ -68,16 +68,22 @@ class PushRefreshableContainer: UIView {
             scrollView.contentInset = scrollViewInsets
             scrollView.contentOffset.y = -scrollViewInsets.top
             
-            observation1 = scrollView.observe(\.contentOffset, changeHandler: { [weak self] (scrollView, changed) in
-                self?.observeChanged(scrollView: scrollView)
-            })
-            observation2 = scrollView.observe(\.contentSize, changeHandler: { [weak self] (scrollView, changed) in
-                self?.observeChanged(scrollView: scrollView)
-            })
+//            observation1 = scrollView.observe(\.contentOffset, changeHandler: { [weak self] (scrollView, changed) in
+//                self?.observeChanged(scrollView: scrollView)
+//            })
+//            observation2 = scrollView.observe(\.contentSize, changeHandler: { [weak self] (scrollView, changed) in
+//                self?.observeChanged(scrollView: scrollView)
+//            })
+			
+			scrollView.addObserver(self, forKeyPath: "contentOffset", options: .new, context: nil)
+			scrollView.addObserver(self, forKeyPath: "contentSize", options: .new, context: nil)
+			
         }
     }
     
     open override func removeFromSuperview() {
+		superview?.removeObserver(self, forKeyPath: "contentOffset")
+		superview?.removeObserver(self, forKeyPath: "contentSize")
         if let scrollView = superview as? UIScrollView {
             var contentInset = scrollView.contentInset
             contentInset.bottom -= bounds.height
@@ -89,11 +95,18 @@ class PushRefreshableContainer: UIView {
     deinit {
         print("\(self) deinit")
     }
+	
+	override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+		if keyPath == "contentOffset" || keyPath == "contentSize" {
+			observeChanged()
+		}
+	}
     
-    private func observeChanged(scrollView: UIScrollView) {
+    private func observeChanged() {
         
         guard state != .refreshing else { return }
-        
+		guard let scrollView = superview as? UIScrollView else { return }
+		
         guard scrollView.contentOffset.y + scrollViewInsets.top > 0 else { return }
         
         frame.origin.y = max(scrollView.contentSize.height, scrollView.bounds.size.height - scrollView.contentInset.top - scrollView.contentInset.bottom)

@@ -21,8 +21,8 @@ class PullRefreshableContainer: UIView {
     fileprivate var scrollViewInsets: UIEdgeInsets = .zero
     fileprivate let refreshAction: (() -> Void)?
     
-    private var observation: NSKeyValueObservation?
-    
+//    private var observation: NSKeyValueObservation?
+	
     var state: PullToRefreshState = .stoped {
         didSet {
             guard state != oldValue else { return }
@@ -63,18 +63,31 @@ class PullRefreshableContainer: UIView {
             scrollViewInsets = scrollView.contentInset
             scrollView.contentOffset.y = -scrollViewInsets.top
 
-            observation = scrollView.observe(\.contentOffset) { [weak self] (scrollView, changed) in
-                self?.observeChanged(scrollView: scrollView)
-            }
+			scrollView.addObserver(self, forKeyPath: "contentOffset", options: .new, context: nil)
+//            observation = scrollView.observe(\.contentOffset) { [weak self] (scrollView, changed) in
+//                self?.observeChanged(scrollView: scrollView)
+//            }
         }
     }
+	
+	override func removeFromSuperview() {
+		superview?.removeObserver(self, forKeyPath: "contentOffset")
+		super.removeFromSuperview()
+	}
     
     deinit {
         print("\(self) deinit")
     }
+	
+	override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+		if keyPath == "contentOffset" {
+			observeChanged()
+		}
+	}
     
-    private func observeChanged(scrollView: UIScrollView) {
+    private func observeChanged() {
         guard state != .refreshing else { return }
+		guard let scrollView = superview as? UIScrollView else { return }
         
         let progress = (scrollView.contentOffset.y + scrollView.contentInset.top) / frame.size.height
         
