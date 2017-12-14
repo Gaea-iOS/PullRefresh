@@ -80,10 +80,14 @@ class PushRefreshableContainer: UIView {
 			
         }
     }
-    
-    open override func removeFromSuperview() {
+	
+	private func unregist() {
 		superview?.removeObserver(self, forKeyPath: "contentOffset")
 		superview?.removeObserver(self, forKeyPath: "contentSize")
+	}
+    
+    open override func removeFromSuperview() {
+		unregist()
         if let scrollView = superview as? UIScrollView {
             var contentInset = scrollView.contentInset
             contentInset.bottom -= bounds.height
@@ -93,6 +97,7 @@ class PushRefreshableContainer: UIView {
     }
     
     deinit {
+		unregist()
         print("\(self) deinit")
     }
 	

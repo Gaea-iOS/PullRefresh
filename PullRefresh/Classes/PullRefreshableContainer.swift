@@ -70,12 +70,17 @@ class PullRefreshableContainer: UIView {
         }
     }
 	
-	override func removeFromSuperview() {
+	private func unregist() {
 		superview?.removeObserver(self, forKeyPath: "contentOffset")
+	}
+	
+	override func removeFromSuperview() {
+		unregist()
 		super.removeFromSuperview()
 	}
     
     deinit {
+		unregist()
         print("\(self) deinit")
     }
 	
