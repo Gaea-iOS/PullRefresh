@@ -39,7 +39,16 @@ class PushRefreshableContainer: UIView {
             }
         }
     }
-    
+    var forceHidden: Bool = false {
+        didSet {
+            guard let scrollView = superview as? UIScrollView else { return }
+            if forceHidden {
+                scrollView.contentInset = .zero
+            } else {
+                scrollView.contentInset = self.scrollViewInsets
+            }
+        }
+    }
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -121,11 +130,16 @@ class PushRefreshableContainer: UIView {
         //        print("push progress = \(progress)")
         
         guard progress > 0 else {
-            isHidden = true
+            
+            isHidden =  true
             return
         }
-        
-        isHidden = false
+//        if self.forceHidden {
+//            isHidden = true
+//        } else {
+//            isHidden = false
+//        }
+        isHidden = self.forceHidden
         
         if scrollView.isDragging {
             refreshView.pulling(progress: progress)
@@ -148,17 +162,21 @@ extension PushRefreshableContainer {
         
         guard let scrollView = superview as? UIScrollView else { return }
         
-        isHidden = false
+        isHidden = self.forceHidden
         
         refreshView.startRefreshAnimation()
         
         let insets = scrollViewInsets
+        if !self.forceHidden {
+            UIView.animate(withDuration: 0.3, animations: {
+                scrollView.contentInset = insets
+            }, completion: { _ in
+                self.refreshAction?()
+            })
+        } else {
+            scrollView.contentInset = .zero
+        }
         
-        UIView.animate(withDuration: 0.3, animations: {
-            scrollView.contentInset = insets
-        }, completion: { _ in
-            self.refreshAction?()
-        })
     }
     
     fileprivate func stopAnimation() {
@@ -166,12 +184,16 @@ extension PushRefreshableContainer {
         guard let scrollView = superview as? UIScrollView else { return }
         
         refreshView.stopRefreshAnimation()
+        if !self.forceHidden {
+            UIView.animate(withDuration: 0.3, animations: {
+                scrollView.contentInset = self.scrollViewInsets
+            }, completion: { _ in
+                self.isHidden = true
+            })
+        } else {
+            scrollView.contentInset = .zero
+        }
         
-        UIView.animate(withDuration: 0.3, animations: {
-            scrollView.contentInset = self.scrollViewInsets
-        }, completion: { _ in
-            self.isHidden = true
-        })
     }
 }
 

@@ -62,6 +62,22 @@ public extension UIScrollView {
             pushRefreshableContainer = nil
         }
     }
+    
+    public func hidePushRefresh() {
+        if pushRefreshableContainer != nil {
+            pushRefreshableContainer?.state = .stoped
+            pushRefreshableContainer?.forceHidden = true
+        }
+    }
+    
+    public func showPushRefresh() {
+        
+        if pushRefreshableContainer != nil {
+            pushRefreshableContainer?.state = .stoped
+            pushRefreshableContainer?.forceHidden = false
+        }
+    }
+   
 }
 
 private extension UIScrollView {
