@@ -65,7 +65,7 @@ public extension UIScrollView {
     
     public func hidePushRefresh() {
         if pushRefreshableContainer != nil {
-            pushRefreshableContainer?.state = .stoped
+//            pushRefreshableContainer?.state = .stoped
             pushRefreshableContainer?.forceHidden = true
         }
     }
@@ -73,7 +73,7 @@ public extension UIScrollView {
     public func showPushRefresh() {
         
         if pushRefreshableContainer != nil {
-            pushRefreshableContainer?.state = .stoped
+//            pushRefreshableContainer?.state = .stoped
             pushRefreshableContainer?.forceHidden = false
         }
     }

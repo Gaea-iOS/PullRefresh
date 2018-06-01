@@ -42,10 +42,12 @@ class PushRefreshableContainer: UIView {
     var forceHidden: Bool = false {
         didSet {
             guard let scrollView = superview as? UIScrollView else { return }
-            if forceHidden {
-                scrollView.contentInset = .zero
-            } else {
-                scrollView.contentInset = self.scrollViewInsets
+            UIView.animate(withDuration: 0.30) {
+                if self.forceHidden {
+                    scrollView.contentInset = .zero
+                } else {
+                    scrollView.contentInset = self.scrollViewInsets
+                }
             }
         }
     }
