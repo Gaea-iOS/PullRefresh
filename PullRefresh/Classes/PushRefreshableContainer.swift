@@ -19,6 +19,7 @@ class PushRefreshableContainer: UIView {
     
     fileprivate let refreshView: RefreshViewType
     fileprivate var scrollViewInsets: UIEdgeInsets = .zero
+	fileprivate var originalScrollViewInsets: UIEdgeInsets = .zero
     fileprivate let refreshAction: (() -> Void)?
     
 //    private var observation1: NSKeyValueObservation?
@@ -44,7 +45,7 @@ class PushRefreshableContainer: UIView {
             guard let scrollView = superview as? UIScrollView else { return }
             UIView.animate(withDuration: 0.30) {
                 if self.forceHidden {
-                    scrollView.contentInset = .zero
+                    scrollView.contentInset = self.originalScrollViewInsets
                 } else {
                     scrollView.contentInset = self.scrollViewInsets
                 }
@@ -74,6 +75,7 @@ class PushRefreshableContainer: UIView {
         
         if let scrollView = newSuperview as? UIScrollView {
             
+			originalScrollViewInsets = scrollView.contentInset
             scrollViewInsets = scrollView.contentInset
             scrollViewInsets.bottom += bounds.height
             scrollView.contentInset = scrollViewInsets
