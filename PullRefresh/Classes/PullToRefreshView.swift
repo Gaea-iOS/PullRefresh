@@ -20,7 +20,7 @@ public class PullToRefreshView: UIView, RefreshViewType {
         return view
     }()
     
-    private lazy var indicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+    private lazy var indicator = UIActivityIndicatorView(style: .gray)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
