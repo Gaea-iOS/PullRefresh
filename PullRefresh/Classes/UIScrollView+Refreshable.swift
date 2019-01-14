@@ -14,7 +14,7 @@ public extension UIScrollView {
         
         if pullRefreshableContainer == nil {
             let height: CGFloat = 60
-            let frame = CGRect(x: 0, y: -height, width: self.contentSize.width, height: height)
+            let frame = CGRect(x: 0, y: -height, width: self.frame.width, height: height)
             pullRefreshableContainer = PullRefreshableContainer(frame: frame, refreshView: refreshView, refreshAction: refreshAction)
             pullRefreshableContainer!.autoresizingMask = [.flexibleWidth]
             insertSubview(pullRefreshableContainer!, at: 0)
@@ -44,7 +44,7 @@ public extension UIScrollView {
         
         if pushRefreshableContainer == nil {
             let height: CGFloat = 60
-            let frame = CGRect(x: 0, y: 0, width: self.contentSize.width, height: height)
+            let frame = CGRect(x: 0, y: 0, width: self.frame.width, height: height)
             pushRefreshableContainer = PushRefreshableContainer(frame: frame, refreshView: refreshView, refreshAction: refreshAction)
             pushRefreshableContainer!.autoresizingMask = [.flexibleWidth]
             insertSubview(pushRefreshableContainer!, at: 1)
