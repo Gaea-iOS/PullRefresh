@@ -51,7 +51,9 @@ class ViewController: UITableViewController {
             DispatchQueue.main.asyncAfter(deadline: i < 2 ? time : time1 , execute: {
                 self.tableView.stopPushRefresh()
                 self.tableView.stopPullRefresh()
-                self._count += i < 2 ? 20 : 0
+				if self._count < 60 {
+					self._count += i < 2 ? 20 : 0
+				}
                 self.tableView.reloadData()
             })
         }

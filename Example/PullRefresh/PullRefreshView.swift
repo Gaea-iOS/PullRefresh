@@ -27,7 +27,7 @@ class PullRefreshView: UIView, NibLoadable, RefreshViewType {
             animation.toValue = Double.pi * 2
             animation.duration = 0.2
             animation.autoreverses = false
-            animation.fillMode = kCAFillModeForwards
+			animation.fillMode = CAMediaTimingFillMode.forwards
             animation.repeatCount = .greatestFiniteMagnitude
             return animation
         }()
