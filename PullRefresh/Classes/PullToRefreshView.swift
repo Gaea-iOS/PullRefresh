@@ -8,7 +8,7 @@
 
 import UIKit
 
-public class PullToRefreshView: UIView, RefreshViewType {
+open class PullToRefreshView: UIView, RefreshViewType {
     
     private lazy var backgroudView = UIView()
 
@@ -30,7 +30,7 @@ public class PullToRefreshView: UIView, RefreshViewType {
         addSubview(indicator)
     }
     
-    override public func layoutSubviews() {
+    override open func layoutSubviews() {
         super.layoutSubviews()
         backgroudView.frame = CGRect(x: 0, y: -500, width: bounds.size.width, height: 500 + bounds.size.height)
         label.frame = bounds
@@ -41,7 +41,7 @@ public class PullToRefreshView: UIView, RefreshViewType {
         fatalError("init(coder:) has not been implemented")
     }
         
-    public func pulling(progress: CGFloat) {
+    open func pulling(progress: CGFloat) {
         label.isHidden = false
         indicator.isHidden = true
         if progress < 1 {
@@ -51,13 +51,13 @@ public class PullToRefreshView: UIView, RefreshViewType {
         }
     }
     
-    public func startRefreshAnimation() {
+    open func startRefreshAnimation() {
         label.isHidden = true
         indicator.isHidden = false
         indicator.startAnimating()
     }
     
-    public func stopRefreshAnimation() {
+    open func stopRefreshAnimation() {
         label.isHidden = true
         indicator.isHidden = true
     }

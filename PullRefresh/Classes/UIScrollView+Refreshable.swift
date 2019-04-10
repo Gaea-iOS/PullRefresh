@@ -10,7 +10,7 @@ import UIKit
 
 public extension UIScrollView {
     
-    public func addPullRefresh(refreshView: RefreshViewType = PullToRefreshView(), refreshAction: (() -> Void)? = nil) {
+    func addPullRefresh(refreshView: RefreshViewType = PullToRefreshView(), refreshAction: (() -> Void)? = nil) {
         
         if pullRefreshableContainer == nil {
             let height: CGFloat = 60
@@ -21,15 +21,15 @@ public extension UIScrollView {
         }
     }
     
-    public func startPullRefresh() {
+    func startPullRefresh() {
         pullRefreshableContainer?.state = .refreshing
     }
     
-    public func stopPullRefresh() {
+    func stopPullRefresh() {
         pullRefreshableContainer?.state = .stoped
     }
     
-    public func removePullRefresh() {
+    func removePullRefresh() {
         if pullRefreshableContainer != nil {
             pullRefreshableContainer?.state = .stoped
             pullRefreshableContainer?.removeFromSuperview()
@@ -40,7 +40,7 @@ public extension UIScrollView {
 
 public extension UIScrollView {
     
-    public func addPushRefresh(refreshView: RefreshViewType = PushToRefreshView(), refreshAction: (() -> Void)? = nil) {
+    func addPushRefresh(refreshView: RefreshViewType = PushToRefreshView(), refreshAction: (() -> Void)? = nil) {
         
         if pushRefreshableContainer == nil {
             let height: CGFloat = 60
@@ -51,33 +51,17 @@ public extension UIScrollView {
         }
     }
         
-    public func stopPushRefresh() {
+    func stopPushRefresh() {
         pushRefreshableContainer?.state = .stoped
     }
     
-    public func removePushRefresh() {
+    func removePushRefresh() {
         if pushRefreshableContainer != nil {
             pushRefreshableContainer?.state = .stoped
             pushRefreshableContainer?.removeFromSuperview()
             pushRefreshableContainer = nil
         }
-    }
-    
-    public func hidePushRefresh() {
-        if pushRefreshableContainer != nil {
-//            pushRefreshableContainer?.state = .stoped
-            pushRefreshableContainer?.forceHidden = true
-        }
-    }
-    
-    public func showPushRefresh() {
-        
-        if pushRefreshableContainer != nil {
-//            pushRefreshableContainer?.state = .stoped
-            pushRefreshableContainer?.forceHidden = false
-        }
-    }
-   
+    }   
 }
 
 private extension UIScrollView {

@@ -17,12 +17,12 @@ class PullRefreshableContainer: UIView {
         case stoped
     }
     
-    fileprivate let refreshView: RefreshViewType
-    fileprivate var scrollViewInsets: UIEdgeInsets = .zero
-    fileprivate let refreshAction: (() -> Void)?
+    private let refreshView: RefreshViewType
+    private var originScrollViewInsetsTop: CGFloat = 0.0
+    private let refreshAction: (() -> Void)?
     
-//    private var observation: NSKeyValueObservation?
-	
+    private var observation: NSKeyValueObservation?
+
     var state: PullToRefreshState = .stoped {
         didSet {
             guard state != oldValue else { return }
@@ -59,42 +59,50 @@ class PullRefreshableContainer: UIView {
     }
     
     override func willMove(toSuperview newSuperview: UIView?) {
+        super.willMove(toSuperview: newSuperview)
         if let scrollView = newSuperview as? UIScrollView {
-            scrollViewInsets = scrollView.contentInset
-            scrollView.contentOffset.y = -scrollViewInsets.top
+            originScrollViewInsetsTop = scrollView.contentInset.top
+            scrollView.contentOffset.y = -scrollView.contentInset.top
 
-			scrollView.addObserver(self, forKeyPath: "contentOffset", options: .new, context: nil)
-//            observation = scrollView.observe(\.contentOffset) { [weak self] (scrollView, changed) in
-//                self?.observeChanged(scrollView: scrollView)
-//            }
+//            scrollView.addObserver(self, forKeyPath: "contentOffset", options: .new, context: nil)
+            observation = scrollView.observe(\UIScrollView.contentOffset) { [weak self] _,_ in
+                self?.observeChanged()
+            }
         }
     }
 	
-	private func unregist() {
-		superview?.removeObserver(self, forKeyPath: "contentOffset")
-	}
-	
-	override func removeFromSuperview() {
-		unregist()
-		super.removeFromSuperview()
-	}
-    
+//    private func unregist() {
+//        superview?.removeObserver(self, forKeyPath: "contentOffset")
+//    }
+
+//    override func removeFromSuperview() {
+//        unregist()
+//        super.removeFromSuperview()
+//    }
+
     deinit {
-		unregist()
+//        unregist()
         print("\(self) deinit")
     }
 	
-	override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-		if keyPath == "contentOffset" {
-			observeChanged()
-		}
-	}
+//    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+//        if keyPath == "contentOffset" {
+//            observeChanged()
+//        }
+//    }
     
     private func observeChanged() {
         guard state != .refreshing else { return }
 		guard let scrollView = superview as? UIScrollView else { return }
-        
-        let progress = (scrollView.contentOffset.y + scrollView.contentInset.top) / frame.size.height
+
+        let progress: CGFloat = {
+            if #available(iOS 11, *) {
+                return (scrollView.contentOffset.y + scrollView.adjustedContentInset.top) / frame.size.height
+            } else {
+                return (scrollView.contentOffset.y + scrollView.contentInset.top) / frame.size.height
+            }
+        }()
+
         
         //        print("pull progress = \(progress)")
         
@@ -131,12 +139,9 @@ extension PullRefreshableContainer {
         isHidden = false
         
         refreshView.startRefreshAnimation()
-        
-        var insets = scrollViewInsets
-        insets.top += frame.size.height
-        
+
         UIView.animate(withDuration: 0.3, animations: {
-            scrollView.contentInset = insets
+            scrollView.contentInset.top = self.originScrollViewInsetsTop + self.frame.size.height
         }, completion: { _ in
             self.refreshAction?()
         })
@@ -149,11 +154,9 @@ extension PullRefreshableContainer {
         refreshView.stopRefreshAnimation()
         
         UIView.animate(withDuration: 0.3, animations: {
-            scrollView.contentInset = self.scrollViewInsets
+            scrollView.contentInset.top = self.originScrollViewInsetsTop
         }, completion: { _ in
             self.isHidden = true
         })
     }
 }
-
-
