@@ -94,17 +94,20 @@ class PushRefreshControlContainer: UIView {
         guard state != .refreshing else { return }
         guard let scrollView = superview as? UIScrollView else { return }
 
-        guard scrollView.contentOffset.y + scrollView.contentInset.top > 0 else { return }
 
-        let progress: CGFloat = {
+        let scrollViewContentInset: UIEdgeInsets = {
             if #available(iOS 11, *) {
-                frame.origin.y = max(scrollView.contentSize.height, scrollView.bounds.size.height - scrollView.adjustedContentInset.top - scrollView.adjustedContentInset.bottom)
-                return (scrollView.contentOffset.y + scrollView.frame.size.height - scrollView.adjustedContentInset.bottom - frame.origin.y + bounds.height) / frame.size.height
+                return scrollView.adjustedContentInset
             } else {
-                frame.origin.y = max(scrollView.contentSize.height, scrollView.bounds.size.height - scrollView.contentInset.top - scrollView.contentInset.bottom)
-                return (scrollView.contentOffset.y + scrollView.frame.size.height - scrollView.contentInset.bottom - frame.origin.y + bounds.height) / frame.size.height
+                return scrollView.contentInset
             }
         }()
+
+        guard scrollView.contentOffset.y + scrollViewContentInset.top > 0 else { return }
+
+        frame.origin.y = max(scrollView.contentSize.height, scrollView.bounds.height - scrollViewContentInset.top - scrollViewContentInset.bottom)
+
+        let progress = (scrollView.contentOffset.y + scrollView.bounds.height - scrollViewContentInset.bottom - frame.origin.y + bounds.height) / bounds.height
 
         guard progress > 0 else {
             isHidden =  true

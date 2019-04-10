@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PullRefresh'
-  s.version          = '0.6.0'
+  s.version          = '0.6.2'
   s.summary          = 'PullRefresh design for UIScrollView to pull to refresh.'
 
 # This description is used to generate tags and improve search results.

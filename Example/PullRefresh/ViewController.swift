@@ -42,7 +42,7 @@ class ViewController: UITableViewController {
             DispatchQueue.main.asyncAfter(deadline: i < 2 ? time : time1 , execute: {
                 self.tableView.stopPushRefresh()
                 if self._count < 60 {
-                    self._count += i < 2 ? 20 : 0
+                    self._count += 4
                 }
                 self.tableView.reloadData()
             })
@@ -55,7 +55,7 @@ class ViewController: UITableViewController {
             let time = DispatchTime.now() + Double(Int64(1 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
             DispatchQueue.main.asyncAfter(deadline: time, execute: {
                 self.tableView.stopPullRefresh()
-                self._count = 20
+                self._count = 4
                 self.tableView.reloadData()
             })
         }
@@ -94,6 +94,10 @@ class ViewController: UITableViewController {
         cell.textLabel?.text = String(indexPath.row)
         return cell
     }
+
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 50
+    }
     
     @IBAction func clickLeftButton(sender: AnyObject) {
         
@@ -116,7 +120,7 @@ class ViewController: UITableViewController {
             let time = DispatchTime.now() + Double(Int64(1 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
             DispatchQueue.main.asyncAfter(deadline: time, execute: {
                 self.tableView.stopPullRefresh()
-                self._count = 20
+                self._count = 4
                 self.tableView.reloadData()
             })
         }
@@ -127,7 +131,7 @@ class ViewController: UITableViewController {
             let time = DispatchTime.now() + Double(Int64(2 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
             DispatchQueue.main.asyncAfter(deadline: time, execute: {
                 self.tableView.stopPushRefresh()
-                self._count += 20
+                self._count += 4
                 self.tableView.reloadData()
             })
         }
