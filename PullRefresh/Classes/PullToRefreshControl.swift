@@ -1,5 +1,5 @@
 //
-//  PullToRefreshView.swift
+//  PullToRefreshControl.swift
 //  Refresh
 //
 //  Created by 王小涛 on 2016/12/17.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-open class PullToRefreshView: UIView, RefreshViewType {
+open class PullToRefreshControl: UIView, RefreshControlType {
     
     private lazy var backgroudView = UIView()
 
@@ -21,8 +21,10 @@ open class PullToRefreshView: UIView, RefreshViewType {
     }()
     
     private lazy var indicator = UIActivityIndicatorView(style: .gray)
+
+    open var refreshAction: (() -> ())?
     
-    override init(frame: CGRect) {
+    public override init(frame: CGRect) {
         super.init(frame: frame)
         backgroudView.backgroundColor = UIColor(red: 0.96, green: 0.96, blue: 0.96, alpha: 1)
         addSubview(backgroudView)
@@ -30,7 +32,7 @@ open class PullToRefreshView: UIView, RefreshViewType {
         addSubview(indicator)
     }
     
-    override open func layoutSubviews() {
+    open override func layoutSubviews() {
         super.layoutSubviews()
         backgroudView.frame = CGRect(x: 0, y: -500, width: bounds.size.width, height: 500 + bounds.size.height)
         label.frame = bounds

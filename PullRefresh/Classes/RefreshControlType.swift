@@ -1,5 +1,5 @@
 //
-//  RefreshViewType.swift
+//  RefreshControlType.swift
 //  Refresh
 //
 //  Created by 王小涛 on 2016/12/17.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-public protocol RefreshViewType {
+public protocol RefreshControlType: UIView {
     
     var refreshView: UIView { get}
 
@@ -17,9 +17,11 @@ public protocol RefreshViewType {
     func startRefreshAnimation()
     
     func stopRefreshAnimation()
+
+    var refreshAction: (() -> ())? { get set }
 }
 
-public extension RefreshViewType where Self: UIView {
+public extension RefreshControlType where Self: UIView {
 
     var refreshView: UIView {
         return self

@@ -8,20 +8,29 @@
 
 import UIKit
 
-class PullRefreshableContainer: UIView {
-    
+class PullRefreshControlContainer: UIView {
+
     enum PullToRefreshState {
         case pulling
         case triggered
         case refreshing
         case stoped
     }
-    
-    private let refreshView: RefreshViewType
+
     private var originScrollViewInsetsTop: CGFloat = 0.0
-    private let refreshAction: (() -> Void)?
-    
+
     private var observation: NSKeyValueObservation?
+
+    var refreshControl: RefreshControlType? {
+        didSet {
+            oldValue?.removeFromSuperview()
+            if let newValue = refreshControl {
+                addSubview(newValue.refreshView)
+            }
+            setNeedsLayout()
+            layoutIfNeeded()
+        }
+    }
 
     var state: PullToRefreshState = .stoped {
         didSet {
@@ -38,62 +47,36 @@ class PullRefreshableContainer: UIView {
             }
         }
     }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        isHidden = true
+    }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    init(frame: CGRect, refreshView: RefreshViewType, refreshAction: (() -> Void)? = nil) {
-        
-        self.refreshView = refreshView
-        self.refreshAction = refreshAction
-        
-        super.init(frame: frame)
-        addSubview(refreshView.refreshView)
-        isHidden = true
-    }
-    
     override func layoutSubviews() {
         super.layoutSubviews()
-        refreshView.refreshView.frame = bounds
+        refreshControl?.refreshView.frame = bounds
     }
-    
+
     override func willMove(toSuperview newSuperview: UIView?) {
         super.willMove(toSuperview: newSuperview)
         if let scrollView = newSuperview as? UIScrollView {
             originScrollViewInsetsTop = scrollView.contentInset.top
             scrollView.contentOffset.y = -scrollView.contentInset.top
 
-//            scrollView.addObserver(self, forKeyPath: "contentOffset", options: .new, context: nil)
             observation = scrollView.observe(\UIScrollView.contentOffset) { [weak self] _,_ in
                 self?.observeChanged()
             }
         }
     }
-	
-//    private func unregist() {
-//        superview?.removeObserver(self, forKeyPath: "contentOffset")
-//    }
 
-//    override func removeFromSuperview() {
-//        unregist()
-//        super.removeFromSuperview()
-//    }
-
-    deinit {
-//        unregist()
-        print("\(self) deinit")
-    }
-	
-//    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-//        if keyPath == "contentOffset" {
-//            observeChanged()
-//        }
-//    }
-    
     private func observeChanged() {
         guard state != .refreshing else { return }
-		guard let scrollView = superview as? UIScrollView else { return }
+        guard let scrollView = superview as? UIScrollView else { return }
 
         let progress: CGFloat = {
             if #available(iOS 11, *) {
@@ -103,25 +86,22 @@ class PullRefreshableContainer: UIView {
             }
         }()
 
-        
-        //        print("pull progress = \(progress)")
-        
         guard progress < 0 else {
             if state == .pulling {
                 isHidden = true
             }
             return
         }
-        
+
         isHidden = false
-        
+
         if scrollView.isDragging {
-            refreshView.pulling(progress: -progress)
+            refreshControl?.pulling(progress: -progress)
             state = .pulling
         }
-        
+
         guard [.pulling, .triggered].contains(state) else { return }
-        
+
         if -progress >= 1 {
             state = scrollView.isDragging ? .triggered : .refreshing
         }else {
@@ -130,29 +110,29 @@ class PullRefreshableContainer: UIView {
     }
 }
 
-extension PullRefreshableContainer {
-    
-    fileprivate func startAnimation() {
-        
+private extension PullRefreshControlContainer {
+
+    func startAnimation() {
+
         guard let scrollView = superview as? UIScrollView else { return }
-        
+
         isHidden = false
-        
-        refreshView.startRefreshAnimation()
+
+        refreshControl?.startRefreshAnimation()
 
         UIView.animate(withDuration: 0.3, animations: {
             scrollView.contentInset.top = self.originScrollViewInsetsTop + self.frame.size.height
         }, completion: { _ in
-            self.refreshAction?()
+            self.refreshControl?.refreshAction?()
         })
     }
-    
-    fileprivate func stopAnimation() {
-        
+
+    func stopAnimation() {
+
         guard let scrollView = superview as? UIScrollView else { return }
-        
-        refreshView.stopRefreshAnimation()
-        
+
+        refreshControl?.stopRefreshAnimation()
+
         UIView.animate(withDuration: 0.3, animations: {
             scrollView.contentInset.top = self.originScrollViewInsetsTop
         }, completion: { _ in
@@ -160,3 +140,4 @@ extension PullRefreshableContainer {
         })
     }
 }
+

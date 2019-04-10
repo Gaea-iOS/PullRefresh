@@ -1,6 +1,6 @@
 {
   "name": "PullRefresh",
-  "version": "0.1.0",
+  "version": "0.5.6",
   "summary": "PullRefresh design for UIScrollView to pull to refresh.",
   "description": "PullRefresh design for UIScrollView to pull to refresh, and PushRefresh for push to refresh.",
   "homepage": "https://github.com/Gaea-iOS/PullRefresh",
@@ -13,10 +13,11 @@
   },
   "source": {
     "git": "https://github.com/Gaea-iOS/PullRefresh.git",
-    "tag": "0.1.0"
+    "tag": "0.5.6"
   },
   "platforms": {
     "ios": "8.0"
   },
+  "swift_version": "4.2",
   "source_files": "PullRefresh/Classes/**/*"
 }

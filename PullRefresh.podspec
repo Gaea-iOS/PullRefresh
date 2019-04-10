@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PullRefresh'
-  s.version          = '0.5.6'
+  s.version          = '0.6.0'
   s.summary          = 'PullRefresh design for UIScrollView to pull to refresh.'
 
 # This description is used to generate tags and improve search results.
@@ -29,6 +29,8 @@ PullRefresh design for UIScrollView to pull to refresh, and PushRefresh for push
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '8.0'
+
+  s.swift_version = '4.2'
 
   s.source_files = 'PullRefresh/Classes/**/*'
   

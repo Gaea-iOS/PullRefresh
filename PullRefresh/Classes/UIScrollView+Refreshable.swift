@@ -9,18 +9,20 @@
 import UIKit
 
 public extension UIScrollView {
-    
-    func addPullRefresh(refreshView: RefreshViewType = PullToRefreshView(), refreshAction: (() -> Void)? = nil) {
-        
-        if pullRefreshableContainer == nil {
-            let height: CGFloat = 60
-            let frame = CGRect(x: 0, y: -height, width: self.frame.width, height: height)
-            pullRefreshableContainer = PullRefreshableContainer(frame: frame, refreshView: refreshView, refreshAction: refreshAction)
-            pullRefreshableContainer!.autoresizingMask = [.flexibleWidth]
-            insertSubview(pullRefreshableContainer!, at: 0)
+
+    var pullRefreshControl: RefreshControlType? {
+        get {
+            return pullRefreshableContainer?.refreshControl
+        }
+        set {
+            if let newValue = newValue {
+                addPullRefreshControl(refreshControl: newValue)
+            } else {
+                removePullRefreshControl()
+            }
         }
     }
-    
+
     func startPullRefresh() {
         pullRefreshableContainer?.state = .refreshing
     }
@@ -28,40 +30,86 @@ public extension UIScrollView {
     func stopPullRefresh() {
         pullRefreshableContainer?.state = .stoped
     }
-    
-    func removePullRefresh() {
+
+    private func addPullRefreshControl(refreshControl: RefreshControlType) {
+        if pullRefreshableContainer == nil {
+            let height: CGFloat = 60
+            let frame = CGRect(x: 0, y: -height, width: self.frame.width, height: height)
+            pullRefreshableContainer = PullRefreshControlContainer(frame: frame)
+            pullRefreshableContainer!.autoresizingMask = [.flexibleWidth]
+            insertSubview(pullRefreshableContainer!, at: 0)
+        }
+        pullRefreshableContainer?.refreshControl = refreshControl
+    }
+
+    private func removePullRefreshControl() {
         if pullRefreshableContainer != nil {
             pullRefreshableContainer?.state = .stoped
             pullRefreshableContainer?.removeFromSuperview()
             pullRefreshableContainer = nil
         }
     }
+
+    @available(*, deprecated, message: "Use scrollView.pullRefreshControl instead of scrollView.addPullRefresh")
+    func addPullRefresh(refreshControl: RefreshControlType = PullToRefreshControl(), refreshAction: (() -> ())? = nil) {
+        pullRefreshControl = refreshControl
+        pullRefreshControl?.refreshAction = refreshAction
+    }
+
+    @available(*, deprecated, message: "Use scrollView.pullRefreshControl instead of scrollView.removePullRefresh")
+    func removePullRefresh() {
+        pullRefreshControl = nil
+    }
 }
 
 public extension UIScrollView {
-    
-    func addPushRefresh(refreshView: RefreshViewType = PushToRefreshView(), refreshAction: (() -> Void)? = nil) {
-        
-        if pushRefreshableContainer == nil {
-            let height: CGFloat = 60
-            let frame = CGRect(x: 0, y: 0, width: self.frame.width, height: height)
-            pushRefreshableContainer = PushRefreshableContainer(frame: frame, refreshView: refreshView, refreshAction: refreshAction)
-            pushRefreshableContainer!.autoresizingMask = [.flexibleWidth]
-            insertSubview(pushRefreshableContainer!, at: 1)
+
+    var pushRefreshControl: RefreshControlType? {
+        get {
+            return pushRefreshableContainer?.refreshControl
+        }
+        set {
+            if let newValue = newValue {
+                addPushRefreshControl(refreshControl: newValue)
+            } else {
+                removePushRefreshControl()
+            }
         }
     }
-        
+    
     func stopPushRefresh() {
         pushRefreshableContainer?.state = .stoped
     }
+
+    private func addPushRefreshControl(refreshControl: RefreshControlType) {
+        if pushRefreshableContainer == nil {
+            let height: CGFloat = 60
+            let frame = CGRect(x: 0, y: 0, width: self.frame.width, height: height)
+            pushRefreshableContainer = PushRefreshControlContainer(frame: frame)
+            pushRefreshableContainer!.autoresizingMask = [.flexibleWidth]
+            insertSubview(pushRefreshableContainer!, at: 1)
+        }
+        pushRefreshableContainer?.refreshControl = refreshControl
+    }
     
-    func removePushRefresh() {
+    private func removePushRefreshControl() {
         if pushRefreshableContainer != nil {
             pushRefreshableContainer?.state = .stoped
             pushRefreshableContainer?.removeFromSuperview()
             pushRefreshableContainer = nil
         }
-    }   
+    }
+
+    @available(*, deprecated, message: "Use scrollView.pushRefreshControl instead of scrollView.addPushRefresh")
+    func addPushRefresh(refreshControl: RefreshControlType = PushToRefreshControl(), refreshAction: (() -> ())? = nil) {
+        pushRefreshControl = refreshControl
+        pushRefreshControl?.refreshAction = refreshAction
+    }
+
+    @available(*, deprecated, message: "Use scrollView.pushRefreshControl instead of scrollView.removePushRefresh")
+    func removePushRefresh() {
+        pushRefreshControl = nil
+    }
 }
 
 private extension UIScrollView {
@@ -71,9 +119,9 @@ private extension UIScrollView {
         static var pushRefresh = "pushRefreshKey"
     }
     
-    var pullRefreshableContainer: PullRefreshableContainer? {
+    var pullRefreshableContainer: PullRefreshControlContainer? {
         get {
-            return objc_getAssociatedObject(self, &AssociatedObjectKey.pullRefresh) as? PullRefreshableContainer
+            return objc_getAssociatedObject(self, &AssociatedObjectKey.pullRefresh) as? PullRefreshControlContainer
         }
         set {
             objc_setAssociatedObject(self,
@@ -83,9 +131,9 @@ private extension UIScrollView {
         }
     }
     
-    var pushRefreshableContainer: PushRefreshableContainer? {
+    var pushRefreshableContainer: PushRefreshControlContainer? {
         get {
-            return objc_getAssociatedObject(self, &AssociatedObjectKey.pushRefresh) as? PushRefreshableContainer
+            return objc_getAssociatedObject(self, &AssociatedObjectKey.pushRefresh) as? PushRefreshControlContainer
         }
         set {
             objc_setAssociatedObject(self,

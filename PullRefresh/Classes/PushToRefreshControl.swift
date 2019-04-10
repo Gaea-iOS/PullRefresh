@@ -1,5 +1,5 @@
 //
-//  PushToRefreshView.swift
+//  PushToRefreshControl.swift
 //  Gaea-Example
 //
 //  Created by 王小涛 on 2016/12/18.
@@ -8,8 +8,8 @@
 
 import UIKit
 
-public class PushToRefreshView: UIView, RefreshViewType {
-    
+open class PushToRefreshControl: UIView, RefreshControlType {
+
     private lazy var backgroudView = UIView()
     
     private lazy var label: UILabel = {
@@ -21,8 +21,10 @@ public class PushToRefreshView: UIView, RefreshViewType {
     }()
     
     private lazy var indicator = UIActivityIndicatorView(style: .gray)
+
+    open var refreshAction: (() -> ())?
     
-    override init(frame: CGRect) {
+    public override init(frame: CGRect) {
         super.init(frame: frame)
         backgroudView.backgroundColor = UIColor(red: 0.96, green: 0.96, blue: 0.96, alpha: 1)
         addSubview(backgroudView)
@@ -30,7 +32,7 @@ public class PushToRefreshView: UIView, RefreshViewType {
         addSubview(indicator)
     }
     
-    override public func layoutSubviews() {
+    open override func layoutSubviews() {
         super.layoutSubviews()
         backgroudView.frame = CGRect(x: 0, y: 0, width: bounds.size.width, height: 500 + bounds.size.height)
         label.frame = bounds
@@ -41,7 +43,7 @@ public class PushToRefreshView: UIView, RefreshViewType {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public func pulling(progress: CGFloat) {
+    open func pulling(progress: CGFloat) {
         label.isHidden = false
         indicator.isHidden = true
         if progress < 1 {
@@ -51,13 +53,13 @@ public class PushToRefreshView: UIView, RefreshViewType {
         }
     }
     
-    public func startRefreshAnimation() {
+    open func startRefreshAnimation() {
         label.isHidden = true
         indicator.isHidden = false
         indicator.startAnimating()
     }
     
-    public func stopRefreshAnimation() {
+    open func stopRefreshAnimation() {
         label.isHidden = true
         indicator.isHidden = true
     }

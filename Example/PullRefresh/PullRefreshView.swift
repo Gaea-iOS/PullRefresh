@@ -10,8 +10,8 @@ import UIKit
 import PullRefresh
 import Reusable
 
-class PullRefreshView: UIView, NibLoadable, RefreshViewType {
-    
+class PullRefreshView: UIView, NibLoadable, RefreshControlType {
+
     @IBOutlet weak var iconImageView: UIImageView!
     @IBOutlet weak var textLabel: UILabel!
     
@@ -37,11 +37,13 @@ class PullRefreshView: UIView, NibLoadable, RefreshViewType {
     public func stopRefreshAnimation() {
         iconImageView.layer.removeAllAnimations()
     }
+
+    var refreshAction: (() -> ())?
 }
 
 extension UIScrollView {
 
     func addPullToRefresh(_ action: @escaping () -> Void) {
-        addPullRefresh(refreshView: PullRefreshView.loadFromNib(), refreshAction: action)
+        addPullRefresh(refreshControl: PullRefreshView.loadFromNib(), refreshAction: action)
     }
 }

@@ -25,7 +25,8 @@ class ViewController: UITableViewController {
         // Do any additional setup after loading the view, typically from a nib.
         tableView.tableFooterView = UIView()
         
-//        automaticallyAdjustsScrollViewInsets = false
+        automaticallyAdjustsScrollViewInsets = false
+        
 
 //        self._count = 20
 //        self.tableView.reloadData()
@@ -47,7 +48,7 @@ class ViewController: UITableViewController {
             })
         }
 
-        tableView.addPullRefresh(refreshView: PullRefreshView.loadFromNib()) {
+        tableView.addPullRefresh(refreshControl: PullRefreshView.loadFromNib()) {
 
             print("pull refreshing action!!!")
 
@@ -58,10 +59,6 @@ class ViewController: UITableViewController {
                 self.tableView.reloadData()
             })
         }
-        
-
-
-
 
         UIView.animate(withDuration: 3, animations: {
 
@@ -112,10 +109,10 @@ class ViewController: UITableViewController {
         //        })
         //        _count = 30
         //        tableView.reloadData()
-        
+
         tableView.addPullRefresh {
             print("pull refreshing action!!!")
-            
+
             let time = DispatchTime.now() + Double(Int64(1 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
             DispatchQueue.main.asyncAfter(deadline: time, execute: {
                 self.tableView.stopPullRefresh()
@@ -123,10 +120,10 @@ class ViewController: UITableViewController {
                 self.tableView.reloadData()
             })
         }
-        
+
         tableView.addPushRefresh {
             print("push refreshing action!!!")
-            
+
             let time = DispatchTime.now() + Double(Int64(2 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
             DispatchQueue.main.asyncAfter(deadline: time, execute: {
                 self.tableView.stopPushRefresh()
@@ -147,7 +144,7 @@ class ViewController: UITableViewController {
         //        _count = 0
         //        tableView.reloadData()
         tableView.removePushRefresh()
-        tableView.removePushRefresh()
+        tableView.removePullRefresh()
 
     }
 }

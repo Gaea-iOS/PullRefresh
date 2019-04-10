@@ -1,23 +1,27 @@
 PODS:
-  - PullRefresh (0.1.0)
-  - Reusable (4.0.0):
-    - Reusable/Storyboard (= 4.0.0)
-    - Reusable/View (= 4.0.0)
-  - Reusable/Storyboard (4.0.0)
-  - Reusable/View (4.0.0)
+  - PullRefresh (0.5.6)
+  - Reusable (4.0.5):
+    - Reusable/Storyboard (= 4.0.5)
+    - Reusable/View (= 4.0.5)
+  - Reusable/Storyboard (4.0.5)
+  - Reusable/View (4.0.5)
 
 DEPENDENCIES:
   - PullRefresh (from `../`)
   - Reusable
 
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - Reusable
+
 EXTERNAL SOURCES:
   PullRefresh:
-    :path: ../
+    :path: "../"
 
 SPEC CHECKSUMS:
-  PullRefresh: 556e495dbb62e37f27431057c95f105fbfab7c53
-  Reusable: 98e5fff1e0e2e00872199699b276dde08ee56c07
+  PullRefresh: 6d727bcbada2ae154bfb2b67d3e5afd6b9094351
+  Reusable: 188be1a54ac0691bc66e5bb24ec6eb91971b315b
 
 PODFILE CHECKSUM: 09e82688ad4af65df9f63927091e3acf9bde6b19
 
-COCOAPODS: 1.2.1
+COCOAPODS: 1.5.3

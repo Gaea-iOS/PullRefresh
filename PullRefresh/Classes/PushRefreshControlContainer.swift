@@ -1,5 +1,5 @@
 //
-//  PushRefreshableContainer.swift
+//  PushRefreshControlContainer.swift
 //  Gaea-Example
 //
 //  Created by 王小涛 on 2016/12/18.
@@ -8,8 +8,7 @@
 
 import UIKit
 
-
-class PushRefreshableContainer: UIView {
+class PushRefreshControlContainer: UIView {
 
     enum PullToRefreshState {
         case pulling
@@ -18,12 +17,21 @@ class PushRefreshableContainer: UIView {
         case stoped
     }
 
-    private let refreshView: RefreshViewType
     private var scrollViewInsetsBottom: CGFloat = 0.0
-    private let refreshAction: (() -> Void)?
 
-        private var observation1: NSKeyValueObservation?
-        private var observation2: NSKeyValueObservation?
+    private var observation1: NSKeyValueObservation?
+    private var observation2: NSKeyValueObservation?
+
+    var refreshControl: RefreshControlType? {
+        didSet {
+            oldValue?.removeFromSuperview()
+            if let newValue = refreshControl {
+                addSubview(newValue.refreshView)
+            }
+            setNeedsLayout()
+            layoutIfNeeded()
+        }
+    }
 
     var state: PullToRefreshState = .stoped {
         didSet {
@@ -45,19 +53,14 @@ class PushRefreshableContainer: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(frame: CGRect, refreshView: RefreshViewType, refreshAction: (() -> Void)? = nil) {
-
-        self.refreshView = refreshView
-        self.refreshAction = refreshAction
-
+    override init(frame: CGRect) {
         super.init(frame: frame)
-        addSubview(refreshView.refreshView)
         isHidden = true
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        refreshView.refreshView.frame = bounds
+        refreshControl?.refreshView.frame = bounds
     }
 
     override func willMove(toSuperview newSuperview: UIView?) {
@@ -68,24 +71,16 @@ class PushRefreshableContainer: UIView {
             scrollView.contentInset.bottom = scrollViewInsetsBottom
             scrollView.contentOffset.y = -scrollView.contentInset.top
 
-//            scrollView.addObserver(self, forKeyPath: "contentOffset", options: .new, context: nil)
             observation1 = scrollView.observe(\UIScrollView.contentOffset) { [weak self] _,_ in
                 self?.observeChanged()
             }
-//            scrollView.addObserver(self, forKeyPath: "contentSize", options: .new, context: nil)
             observation2 = scrollView.observe(\UIScrollView.contentOffset) { [weak self] _,_ in
                 self?.observeChanged()
             }
         }
     }
 
-//    private func unregist() {
-//        superview?.removeObserver(self, forKeyPath: "contentOffset")
-//        superview?.removeObserver(self, forKeyPath: "contentSize")
-//    }
-
     open override func removeFromSuperview() {
-//        unregist()
         if let scrollView = superview as? UIScrollView {
             var contentInset = scrollView.contentInset
             contentInset.bottom -= bounds.height
@@ -93,17 +88,6 @@ class PushRefreshableContainer: UIView {
         }
         super.removeFromSuperview()
     }
-
-    deinit {
-//        unregist()
-        print("\(self) deinit")
-    }
-
-//    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-//        if keyPath == "contentOffset" || keyPath == "contentSize" {
-//            observeChanged()
-//        }
-//    }
 
     private func observeChanged() {
 
@@ -122,10 +106,7 @@ class PushRefreshableContainer: UIView {
             }
         }()
 
-        //        print("push progress = \(progress)")
-
         guard progress > 0 else {
-
             isHidden =  true
             return
         }
@@ -133,7 +114,7 @@ class PushRefreshableContainer: UIView {
         isHidden = false
 
         if scrollView.isDragging {
-            refreshView.pulling(progress: progress)
+            refreshControl?.pulling(progress: progress)
             state = .pulling
         }
 
@@ -147,27 +128,27 @@ class PushRefreshableContainer: UIView {
     }
 }
 
-extension PushRefreshableContainer {
+private extension PushRefreshControlContainer {
 
-    fileprivate func startAnimation() {
+    func startAnimation() {
 
         guard let scrollView = superview as? UIScrollView else { return }
 
-        refreshView.startRefreshAnimation()
+        refreshControl?.startRefreshAnimation()
 
         UIView.animate(withDuration: 0.3, animations: {
             scrollView.contentInset.bottom = self.scrollViewInsetsBottom
         }, completion: { _ in
-            self.refreshAction?()
+            self.refreshControl?.refreshAction?()
         })
     }
 
-    fileprivate func stopAnimation() {
+    func stopAnimation() {
 
         guard let scrollView = superview as? UIScrollView else { return }
 
 
-        refreshView.stopRefreshAnimation()
+        refreshControl?.stopRefreshAnimation()
 
         UIView.animate(withDuration: 0.3, animations: {
             scrollView.contentInset.bottom = self.scrollViewInsetsBottom
@@ -176,4 +157,3 @@ extension PushRefreshableContainer {
         })
     }
 }
-
